@@ -230,7 +230,7 @@ function update_sh() {
   ol_version=$(curl -L -s https://raw.githubusercontent.com/wulabing/Xray_onekey/${github_branch}/install.sh | grep "shell_version=" | head -1 | awk -F '=|"' '{print $3}')
   echo "$ol_version" >$version_cmp
   echo "$shell_version" >>$version_cmp
-  if [[ "$shell_version" -ne "$(sort -rV $version_cmp | head -1)" ]]; then
+  if [[ "$shell_version" != "$(sort -rV $version_cmp | head -1)" ]]; then
     echo -e "${OK} ${GreenBG} 存在新版本，是否更新 [Y/N]? ${Font}"
     read -r update_confirm
     case $update_confirm in
