@@ -29,7 +29,7 @@ OK="${Green}[OK]${Font}"
 Error="${Red}[错误]${Font}"
 
 # 版本
-shell_version="1.1.5.7"
+shell_version="1.1.6.0"
 shell_mode="None"
 github_branch="master"
 version_cmp="/tmp/version_cmp.tmp"
@@ -424,7 +424,7 @@ ssl_install() {
     fi
     judge "安装 SSL 证书生成脚本依赖"
 
-    curl https://get.acme.sh | sh
+    curl https://get.acme.sh | sh -s email=my@example.com
     judge "安装 SSL 证书生成脚本"
 }
 domain_check() {
