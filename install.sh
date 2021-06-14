@@ -31,7 +31,7 @@ Error="${Red}[错误]${Font}"
 Warning="${Red}[警告]${Font}"
 
 # 版本
-shell_version="1.1.7"
+shell_version="1.1.7.1"
 shell_mode="None"
 github_branch="dev"
 version_cmp="/tmp/version_cmp.tmp"
@@ -492,6 +492,7 @@ port_exist_check() {
     fi
 }
 acme() {
+    "$HOME"/.acme.sh/acme.sh --set-default-ca --server zerossl
     if "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force --test; then
         echo -e "${OK} ${GreenBG} SSL 证书测试签发成功，开始正式签发 ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
