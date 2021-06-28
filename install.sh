@@ -851,7 +851,7 @@ uninstall_all() {
       rm -rf /data/*
       ;;
     *) ;;
-  esac
+    esac
     systemctl daemon-reload
     echo -e "${OK} ${GreenBG} 已卸载 ${Font}"
 }
