@@ -18,6 +18,11 @@ Vmess+websocket+TLS+Nginx+Website
 wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh
 ```
 
+VLESS+websocket+TLS+Nginx+Website
+```
+wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey//install.sh" && chmod +x install.sh && bash install.sh
+```
+
 ### 注意事项
 * 如果你不了解脚本中各项设置的具体含义，除域名外，请使用脚本提供的默认值
 * 使用本脚本需要你拥有 Linux 基础及使用经验，了解计算机网络部分知识，计算机基础操作
@@ -87,12 +92,21 @@ Nginx 目录： `/etc/nginx`
 
 ### 捐赠
 
-目前支持通过 MugglePay 接受虚拟货币捐赠
+您可以使用我的 搬瓦工 AFF 购买 VPS
 
-𝒘𝒖𝒍𝒂𝒃𝒊𝒏𝒈 邀请您使用麻瓜宝，基于Telegram的电子钱包，匿名支付0手续费秒级到账。https://telegram.me/MugglePayBot?start=T3Y78AZ3
+https://bandwagonhost.com/aff.php?aff=63939
 
-您可以通过Telegram向我匿名捐赠：发送 /pay @wulabing xxx  到 @MugglePayBot 即可 默认货币为 USDT 
+您可以使用我的 justmysocks AFF 购买搬瓦工提供的代理
 
-如需要通过支付宝/微信捐赠，请Telegram私聊 @wulabing 感谢您的支持
+https://justmysocks.net/members/aff.php?aff=17621
+
+通过 Telegram MugglePay 进行虚拟货币捐赠。
+
+发送 `/pay @wulabing xxx` 到 @MugglePayBot 即可，默认货币为 USDT。
+
+通过 zfaka 进行 支付宝/微信捐赠
+
+https://zfaka.wulabing.com
+
 
 
