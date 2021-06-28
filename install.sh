@@ -31,7 +31,7 @@ Error="${Red}[错误]${Font}"
 Warning="${Red}[警告]${Font}"
 
 # 版本
-shell_version="1.1.7.2"
+shell_version="1.1.8"
 shell_mode="None"
 github_branch="dev"
 version_cmp="/tmp/version_cmp.tmp"
@@ -52,8 +52,8 @@ v2ray_access_log="/var/log/v2ray/access.log"
 v2ray_error_log="/var/log/v2ray/error.log"
 amce_sh_file="/root/.acme.sh/acme.sh"
 ssl_update_file="/usr/bin/ssl_update.sh"
-nginx_version="1.18.0"
-openssl_version="1.1.1g"
+nginx_version="1.20.1"
+openssl_version="1.1.1k"
 jemalloc_version="5.2.1"
 old_config_status="off"
 # v2ray_plugin_version="$(wget -qO- "https://github.com/shadowsocks/v2ray-plugin/tags" | grep -E "/shadowsocks/v2ray-plugin/releases/tag/" | head -1 | sed -r 's/.*tag\/v(.+)\">.*/\1/')"
@@ -246,8 +246,8 @@ port_alterid_set() {
     if [[ "on" != "$old_config_status" ]]; then
         read -rp "请输入连接端口（default:443）:" port
         [[ -z ${port} ]] && port="443"
-        read -rp "请输入alterID（default:2 仅允许填数字）:" alterID
-        [[ -z ${alterID} ]] && alterID="2"
+        read -rp "请输入alterID（default:0 仅允许填数字）:" alterID
+        [[ -z ${alterID} ]] && alterID="0"
     fi
 }
 port_set(){
@@ -494,7 +494,7 @@ port_exist_check() {
     fi
 }
 acme() {
-    "$HOME"/.acme.sh/acme.sh --set-default-ca --server zerossl
+    "$HOME"/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     if "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force --test; then
         echo -e "${OK} ${GreenBG} SSL 证书测试签发成功，开始正式签发 ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
@@ -854,7 +854,6 @@ mtproxy_sh() {
 
 uninstall_all() {
     stop_process_systemd
-    [[ -f $nginx_systemd_file ]] && rm -f $nginx_systemd_file
     [[ -f $v2ray_systemd_file ]] && rm -f $v2ray_systemd_file
     [[ -d $v2ray_bin_dir ]] && rm -rf $v2ray_bin_dir
     [[ -d $v2ray_bin_dir_old ]] && rm -rf $v2ray_bin_dir_old
@@ -864,19 +863,29 @@ uninstall_all() {
         case $uninstall_nginx in
         [yY][eE][sS] | [yY])
             rm -rf $nginx_dir
+            rm -f $nginx_systemd_file
             echo -e "${OK} ${Green} 已卸载 Nginx ${Font}"
             ;;
         *) ;;
-
         esac
     fi
+    echo -e "${OK} ${Green} 是否卸载 acme.sh 及证书文件 [Y/N]? ${Font}"
+    read -r uninstall_acme
+    case $uninstall_acme in
+    [yY][eE][sS] | [yY])
+      /root/.acme.sh/acme.sh --uninstall
+      rm -rf /root/.acme.sh
+      rm -rf /data/
+      ;;
+    *) ;;
+    esac
     [[ -d $v2ray_conf_dir ]] && rm -rf $v2ray_conf_dir
     [[ -d $web_dir ]] && rm -rf $web_dir
     systemctl daemon-reload
-    echo -e "${OK} ${GreenBG} 已卸载，SSL证书文件已保留 ${Font}"
+    echo -e "${OK} ${GreenBG} 已卸载 ${Font}"
 }
 delete_tls_key_and_crt() {
-    [[ -f $HOME/.acme.sh/acme.sh ]] && /root/.acme.sh/acme.sh uninstall >/dev/null 2>&1
+    [[ -f $HOME/.acme.sh/acme.sh ]] && /root/.acme.sh/acme.sh --uninstall >/dev/null 2>&1
     [[ -d $HOME/.acme.sh ]] && rm -rf "$HOME/.acme.sh"
     echo -e "${OK} ${GreenBG} 已清空证书遗留文件 ${Font}"
 }
