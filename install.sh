@@ -31,7 +31,7 @@ Error="${Red}[错误]${Font}"
 Warning="${Red}[警告]${Font}"
 
 # 版本
-shell_version="1.1.8"
+shell_version="1.1.8.1"
 shell_mode="None"
 github_branch="dev"
 version_cmp="/tmp/version_cmp.tmp"
@@ -447,9 +447,7 @@ ssl_install() {
     fi
     judge "安装 SSL 证书生成脚本依赖"
 
-    read -rp "请输入用于注册域名的邮箱:" domain_email
-
-    curl https://get.acme.sh | sh -s email=$domain_email
+    curl https://get.acme.sh | sh
     judge "安装 SSL 证书生成脚本"
 }
 domain_check() {
