@@ -29,7 +29,7 @@ OK="${Green}[OK]${Font}"
 Error="${Red}[错误]${Font}"
 
 # 版本
-shell_version="1.1.7.1"
+shell_version="1.1.8.2"
 shell_mode="None"
 github_branch="master"
 version_cmp="/tmp/version_cmp.tmp"
@@ -222,6 +222,8 @@ dependency_install() {
         systemctl start haveged && systemctl enable haveged
         #       judge "haveged 启动"
     fi
+
+    mkdir -p /usr/local/bin >/dev/null 2>&1
 }
 basic_optimization() {
     # 最大文件打开数
