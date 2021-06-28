@@ -828,8 +828,8 @@ mtproxy_sh() {
 uninstall_all() {
     stop_process_systemd
     [[ -f $v2ray_systemd_file ]] && rm -f $v2ray_systemd_file
-    [[ -d $v2ray_bin_dir ]] && rm -rf $v2ray_bin_dir
-    [[ -d $v2ctl_bin_dir ]] && rm -rf $v2ctl_bin_dir
+    [[ -f $v2ray_bin_dir ]] && rm -f $v2ray_bin_dir
+    [[ -f $v2ctl_bin_dir ]] && rm -f $v2ctl_bin_dir
     [[ -d $v2ray_bin_dir_old ]] && rm -rf $v2ray_bin_dir_old
     if [[ -d $nginx_dir ]]; then
         echo -e "${OK} ${Green} 是否卸载 Nginx [Y/N]? ${Font}"
