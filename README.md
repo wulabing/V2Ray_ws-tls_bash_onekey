@@ -100,13 +100,6 @@ https://bandwagonhost.com/aff.php?aff=63939
 
 https://justmysocks.net/members/aff.php?aff=17621
 
-通过 Telegram MugglePay 进行虚拟货币捐赠。
-
-发送 `/pay @wulabing xxx` 到 @MugglePayBot 即可，默认货币为 USDT。
-
-通过 zfaka 进行 支付宝/微信捐赠
-
-https://zfaka.wulabing.com
 
 
 
