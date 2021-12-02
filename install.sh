@@ -967,6 +967,12 @@ list() {
         ;;
     esac
 }
+modify_camouflage_path() {
+    [[ -z ${camouflage_path} ]] && camouflage_path=1
+    sed -i "/location/c \\\tlocation \/${camouflage_path}\/" ${nginx_conf}          #Modify the camouflage path of the nginx configuration file
+    sed -i "/\"path\"/c \\\t  \"path\":\"\/${camouflage_path}\/\"" ${v2ray_conf}    #Modify the camouflage path of the v2ray configuration file
+    judge "V2ray camouflage path modified"
+}
 
 menu() {
     update_sh
@@ -985,6 +991,7 @@ menu() {
     echo -e "${Green}5.${Font}  变更 alterid"
     echo -e "${Green}6.${Font}  变更 port"
     echo -e "${Green}7.${Font}  变更 TLS 版本(仅ws+tls有效)"
+    echo -e "${Green}18.${Font}  变更伪装路径"
     echo -e "—————————————— 查看信息 ——————————————"
     echo -e "${Green}8.${Font}  查看 实时访问日志"
     echo -e "${Green}9.${Font}  查看 实时错误日志"
@@ -1074,6 +1081,11 @@ menu() {
         ;;
     17)
         exit 0
+        ;;
+    18)
+        read -rp "请输入伪装路径(注意！不需要加斜杠 eg:ray):" camouflage_path
+        modify_camouflage_path
+        start_process_systemd
         ;;
     *)
         echo -e "${RedBG}请输入正确的数字${Font}"
