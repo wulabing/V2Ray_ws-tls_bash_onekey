@@ -334,7 +334,7 @@ v2ray_install() {
     fi
     mkdir -p /root/v2ray
     cd /root/v2ray || exit
-    wget -N --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh
+    wget -N --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh
 
     if [[ -f v2ray.sh ]]; then
         rm -rf $v2ray_systemd_file
@@ -515,17 +515,25 @@ acme() {
         if "$HOME"/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /data/v2ray.crt --keypath /data/v2ray.key --ecc --force; then
             echo -e "${OK} ${GreenBG} 证书配置成功 ${Font}"
             sleep 2
+            if [[ -n $(type -P wgcf) && -n $(type -P wg-quick) ]]; then
+                wg-quick up wgcf >/dev/null 2>&1
+                echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
+            fi
         fi
     else
         echo -e "${Error} ${RedBG} SSL 证书生成失败 ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
+        if [[ -n $(type -P wgcf) && -n $(type -P wg-quick) ]]; then
+            wg-quick up wgcf >/dev/null 2>&1
+            echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
+        fi
         exit 1
     fi
 }
 
 v2ray_conf_add_tls() {
     cd /etc/v2ray || exit
-    wget --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/tls/config.json -O config.json
+    wget --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/tls/config.json -O config.json
     modify_path
     modify_alterid
     modify_inbound_port
@@ -534,7 +542,7 @@ v2ray_conf_add_tls() {
 
 v2ray_conf_add_h2() {
     cd /etc/v2ray || exit
-    wget --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/http2/config.json -O config.json
+    wget --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/http2/config.json -O config.json
     modify_path
     modify_alterid
     modify_inbound_port
@@ -655,7 +663,7 @@ nginx_process_disabled() {
 #}
 
 acme_cron_update() {
-    wget -N -P /usr/bin --no-check-certificate "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/dev/ssl_update.sh"
+    wget -N -P /usr/bin --no-check-certificate "https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/dev/ssl_update.sh"
     if [[ $(crontab -l | grep -c "ssl_update.sh") -lt 1 ]]; then
       if [[ "${ID}" == "centos" ]]; then
           #        sed -i "/acme.sh/c 0 3 * * 0 \"/root/.acme.sh\"/acme.sh --cron --home \"/root/.acme.sh\" \
@@ -857,7 +865,7 @@ ssl_update_manuel() {
 
 bbr_boost_sh() {
     [ -f "tcp.sh" ] && rm -rf ./tcp.sh
-    wget -N --no-check-certificate "https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+    wget -N --no-check-certificate "https://raw.githubusercontents.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
 }
 
 mtproxy_sh() {
@@ -962,7 +970,7 @@ install_v2_h2() {
 
 }
 update_sh() {
-    ol_version=$(curl -L -s https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh | grep "shell_version=" | head -1 | awk -F '=|"' '{print $3}')
+    ol_version=$(curl -L -s https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh | grep "shell_version=" | head -1 | awk -F '=|"' '{print $3}')
     echo "$ol_version" >$version_cmp
     echo "$shell_version" >>$version_cmp
     if [[ "$shell_version" < "$(sort -rV $version_cmp | head -1)" ]]; then
@@ -970,7 +978,7 @@ update_sh() {
         read -r update_confirm
         case $update_confirm in
         [yY][eE][sS] | [yY])
-            wget -N --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh
+            wget -N --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh
             echo -e "${OK} ${GreenBG} 更新完成 ${Font}"
             exit 0
             ;;
@@ -1058,7 +1066,7 @@ menu() {
         install_v2_h2
         ;;
     3)
-        bash <(curl -L -s https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh)
+        bash <(curl -L -s https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh)
         ;;
     4)
         read -rp "请输入UUID:" UUID
