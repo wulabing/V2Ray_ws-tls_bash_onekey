@@ -509,6 +509,18 @@ acme() {
                 echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
             fi
         fi
+    elif "$HOME"/.acme.sh/acme.sh --issue --insecure -d "${domain}" --standalone -k ec-256 --force --listen-v6; then
+        echo -e "${OK} ${GreenBG} SSL 证书生成成功 ${Font}"
+        sleep 2
+        mkdir /data
+        if "$HOME"/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /data/v2ray.crt --keypath /data/v2ray.key --ecc --force; then
+            echo -e "${OK} ${GreenBG} 证书配置成功 ${Font}"
+            sleep 2
+            if [[ -n $(type -P wgcf) && -n $(type -P wg-quick) ]]; then
+                wg-quick up wgcf >/dev/null 2>&1
+                echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
+            fi
+        fi
     else
         echo -e "${Error} ${RedBG} SSL 证书生成失败 ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
