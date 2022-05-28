@@ -458,10 +458,10 @@ domain_check() {
     echo -e "本机IPv4: ${local_ipv4}"
     echo -e "本机IPv6: ${local_ipv6}"
     sleep 2
-    if [[ ${local_ip} == ${local_ipv4} ]]; then
+    if [[ ${domain_ip} == ${local_ipv4} ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv4 匹配 ${Font}"
         sleep 2
-    elif [[ ${local_ip} == ${local_ipv6} ]]; then
+    elif [[ ${domain_ip} == ${local_ipv6} ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv6 匹配 ${Font}"
         sleep 2
     else
