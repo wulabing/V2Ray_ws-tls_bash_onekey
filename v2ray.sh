@@ -68,9 +68,6 @@ identify_the_operating_system_and_architecture() {
             'riscv64')
                 MACHINE='riscv64'
                 ;;
-            's390x')
-                MACHINE='s390x'
-                ;;
             *)
                 echo "error: The architecture is not supported."
                 exit 1
