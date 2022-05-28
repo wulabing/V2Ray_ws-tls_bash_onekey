@@ -250,8 +250,7 @@ port_alterid_set() {
     if [[ "on" != "$old_config_status" ]]; then
         read -rp "请输入连接端口（default:443）:" port
         [[ -z ${port} ]] && port="443"
-        read -rp "请输入alterID（default:0 仅允许填数字）:" alterID
-        [[ -z ${alterID} ]] && alterID="0"
+        alterID="0"
     fi
 }
 
@@ -261,16 +260,6 @@ modify_path() {
     fi
     sed -i "/\"path\"/c \\\t  \"path\":\"${camouflage}\"" ${v2ray_conf}
     judge "V2ray 伪装路径 修改"
-}
-
-modify_alterid() {
-    if [[ "on" == "$old_config_status" ]]; then
-        alterID="$(grep '\"aid\"' $v2ray_qr_config_file | awk -F '"' '{print $4}')"
-    fi
-    sed -i "/\"alterId\"/c \\\t  \"alterId\":${alterID}" ${v2ray_conf}
-    judge "V2ray alterid 修改"
-    [ -f ${v2ray_qr_config_file} ] && sed -i "/\"aid\"/c \\  \"aid\": \"${alterID}\"," ${v2ray_qr_config_file}
-    echo -e "${OK} ${GreenBG} alterID:${alterID} ${Font}"
 }
 
 modify_inbound_port() {
@@ -469,10 +458,10 @@ domain_check() {
     echo -e "本机IPv4: ${local_ipv4}"
     echo -e "本机IPv6: ${local_ipv6}"
     sleep 2
-    if [[ ${local_ip} == ${local_ipv4} ]]; then
+    if [[ ${domain_ip} == ${local_ipv4} ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv4 匹配 ${Font}"
         sleep 2
-    elif [[ ${local_ip} == ${local_ipv6} ]]; then
+    elif [[ ${domain_ip} == ${local_ipv6} ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv6 匹配 ${Font}"
         sleep 2
     else
@@ -535,7 +524,6 @@ v2ray_conf_add_tls() {
     cd /etc/v2ray || exit
     wget --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/tls/config.json -O config.json
     modify_path
-    modify_alterid
     modify_inbound_port
     modify_UUID
 }
@@ -544,7 +532,6 @@ v2ray_conf_add_h2() {
     cd /etc/v2ray || exit
     wget --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/http2/config.json -O config.json
     modify_path
-    modify_alterid
     modify_inbound_port
     modify_UUID
 }
@@ -1035,7 +1022,6 @@ menu() {
     echo -e "${Green}3.${Font}  升级 V2Ray core"
     echo -e "—————————————— 配置变更 ——————————————"
     echo -e "${Green}4.${Font}  变更 UUID"
-    echo -e "${Green}5.${Font}  变更 alterid"
     echo -e "${Green}6.${Font}  变更 port"
     echo -e "${Green}7.${Font}  变更 TLS 版本(仅ws+tls有效)"
     echo -e "${Green}18.${Font}  变更伪装路径"
@@ -1071,11 +1057,6 @@ menu() {
     4)
         read -rp "请输入UUID:" UUID
         modify_UUID
-        start_process_systemd
-        ;;
-    5)
-        read -rp "请输入alterID:" alterID
-        modify_alterid
         start_process_systemd
         ;;
     6)
