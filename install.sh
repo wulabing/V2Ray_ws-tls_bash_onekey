@@ -1,11 +1,5 @@
 #!/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
-export PATH
 
-cd "$(
-    cd "$(dirname "$0")" || exit
-    pwd
-)" || exit
 #====================================================
 #	System Request:Debian 9+/Ubuntu 18.04+/Centos 7+
 #	Author:	wulabing
@@ -14,6 +8,14 @@ cd "$(
 #	email:admin@wulabing.com
 #	Official document: www.v2ray.com
 #====================================================
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+
+cd "$(
+    cd "$(dirname "$0")" || exit
+    pwd
+)" || exit
 
 #fonts color
 Green="\033[32m"
@@ -273,19 +275,7 @@ modify_path() {
     sed -i "/\"path\"/c \\\t  \"path\":\"${camouflage}\"" ${v2ray_conf}
     judge "V2ray 伪装路径 修改"
 }
-modify_alterid() {
-    if [[ $(grep -ic 'VLESS' ${v2ray_conf}) == 0 ]]; then
-        if [[ "on" == "$old_config_status" ]]; then
-            alterID="$(grep '\"aid\"' $v2ray_qr_config_file | awk -F '"' '{print $4}')"
-        fi
-        sed -i "/\"alterId\"/c \\\t  \"alterId\":${alterID}" ${v2ray_conf}
-        judge "V2ray alterid 修改"
-        [ -f ${v2ray_qr_config_file} ] && sed -i "/\"aid\"/c \\  \"aid\": \"${alterID}\"," ${v2ray_qr_config_file}
-        echo -e "${OK} ${GreenBG} alterID:${alterID} ${Font}"
-    else
-        echo -e "${Warning} ${YellowBG} VLESS 不支持修改 alterid ${Font}"
-    fi
-}
+
 modify_inbound_port() {
     if [[ "on" == "$old_config_status" ]]; then
         port="$(info_extraction '\"port\"')"
@@ -344,7 +334,7 @@ v2ray_install() {
     fi
     mkdir -p /root/v2ray
     cd /root/v2ray || exit
-    wget -N --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh
+    wget -N --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh
 
     if [[ -f v2ray.sh ]]; then
         rm -rf $v2ray_systemd_file
@@ -442,6 +432,7 @@ nginx_install() {
     # 添加配置文件夹，适配旧版脚本
     mkdir ${nginx_dir}/conf/conf.d
 }
+
 ssl_install() {
     if [[ "${ID}" == "centos" ]]; then
         ${INS} install socat nc -y
@@ -453,20 +444,37 @@ ssl_install() {
     curl https://get.acme.sh | sh
     judge "安装 SSL 证书生成脚本"
 }
+
 domain_check() {
     read -rp "请输入你的域名信息(eg:www.wulabing.com):" domain
-    domain_ip=$(ping "${domain}" -c 1 | sed '1{s/[^(]*(//;s/).*//;q}')
+    domain_ip=$(curl -sm8 https://ipget.net/?ip="${domain}")
     echo -e "${OK} ${GreenBG} 正在获取 公网ip 信息，请耐心等待 ${Font}"
-    local_ip=$(curl https://api-ipv4.ip.sb/ip)
-    echo -e "域名dns解析IP：${domain_ip}"
-    echo -e "本机IP: ${local_ip}"
+    wgcfv4_status=$(curl -s4m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+    wgcfv6_status=$(curl -s6m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+    if [[ ${wgcfv4_status} =~ "on"|"plus" ]] || [[ ${wgcfv6_status} =~ "on"|"plus" ]]; then
+        # 关闭wgcf-warp，以防误判VPS IP情况
+        wg-quick down wgcf >/dev/null 2>&1
+        echo -e "${OK} ${GreenBG} 已关闭 wgcf-warp ${Font}"
+    fi
+    local_ipv4=$(curl -s4m8 https://ip.gs)
+    local_ipv6=$(curl -s6m8 https://ip.gs)
+    if [[ -z ${local_ipv4} && -n ${local_ipv6} ]]; then
+        echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
+        echo -e "${OK} ${GreenBG} 识别为 IPv6 Only 的 VPS，自动添加 DNS64 服务器 ${Font}"
+    fi
+    echo -e "域名 DNS 解析到的的 IP：${domain_ip}"
+    echo -e "本机IPv4: ${local_ipv4}"
+    echo -e "本机IPv6: ${local_ipv6}"
     sleep 2
-    if [[ $(echo "${local_ip}" | tr '.' '+' | bc) -eq $(echo "${domain_ip}" | tr '.' '+' | bc) ]]; then
-        echo -e "${OK} ${GreenBG} 域名dns解析IP 与 本机IP 匹配 ${Font}"
+    if [[ ${domain_ip} == ${local_ipv4} ]]; then
+        echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv4 匹配 ${Font}"
+        sleep 2
+    elif [[ ${domain_ip} == ${local_ipv6} ]]; then
+        echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv6 匹配 ${Font}"
         sleep 2
     else
-        echo -e "${Error} ${RedBG} 请确保域名添加了正确的 A 记录，否则将无法正常使用 V2ray ${Font}"
-        echo -e "${Error} ${RedBG} 域名dns解析IP 与 本机IP 不匹配 是否继续安装？（y/n）${Font}" && read -r install
+        echo -e "${Error} ${RedBG} 请确保域名添加了正确的 A / AAAA 记录，否则将无法正常使用 V2ray ${Font}"
+        echo -e "${Error} ${RedBG} 域名 DNS 解析 IP 与 本机 IPv4 / IPv6 不匹配 是否继续安装？（y/n）${Font}" && read -r install
         case $install in
         [yY][eE][sS] | [yY])
             echo -e "${GreenBG} 继续安装 ${Font}"
@@ -496,16 +504,7 @@ port_exist_check() {
 }
 acme() {
     "$HOME"/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-    if "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force --test; then
-        echo -e "${OK} ${GreenBG} SSL 证书测试签发成功，开始正式签发 ${Font}"
-        rm -rf "$HOME/.acme.sh/${domain}_ecc"
-        sleep 2
-    else
-        echo -e "${Error} ${RedBG} SSL 证书测试签发失败 ${Font}"
-        rm -rf "$HOME/.acme.sh/${domain}_ecc"
-        exit 1
-    fi
-
+    
     if "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force; then
         echo -e "${OK} ${GreenBG} SSL 证书生成成功 ${Font}"
         sleep 2
@@ -513,26 +512,44 @@ acme() {
         if "$HOME"/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /data/v2ray.crt --keypath /data/v2ray.key --ecc --force; then
             echo -e "${OK} ${GreenBG} 证书配置成功 ${Font}"
             sleep 2
+            if [[ -n $(type -P wgcf) && -n $(type -P wg-quick) ]]; then
+                wg-quick up wgcf >/dev/null 2>&1
+                echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
+            fi
+        fi
+    elif "$HOME"/.acme.sh/acme.sh --issue -d "${domain}" --standalone -k ec-256 --force --listen-v6; then
+        echo -e "${OK} ${GreenBG} SSL 证书生成成功 ${Font}"
+        sleep 2
+        mkdir /data
+        if "$HOME"/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /data/v2ray.crt --keypath /data/v2ray.key --ecc --force; then
+            echo -e "${OK} ${GreenBG} 证书配置成功 ${Font}"
+            sleep 2
+            if [[ -n $(type -P wgcf) && -n $(type -P wg-quick) ]]; then
+                wg-quick up wgcf >/dev/null 2>&1
+                echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
+            fi
         fi
     else
         echo -e "${Error} ${RedBG} SSL 证书生成失败 ${Font}"
         rm -rf "$HOME/.acme.sh/${domain}_ecc"
+        if [[ -n $(type -P wgcf) && -n $(type -P wg-quick) ]]; then
+            wg-quick up wgcf >/dev/null 2>&1
+            echo -e "${OK} ${GreenBG} 已启动 wgcf-warp ${Font}"
+        fi
         exit 1
     fi
 }
 v2ray_conf_add_tls() {
     cd /etc/v2ray || exit
-    wget --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/VLESS_tls/config.json -O config.json
+    wget --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/VLESS_tls/config.json -O config.json
     modify_path
-    modify_alterid
     modify_inbound_port
     modify_UUID
 }
 v2ray_conf_add_h2() {
     cd /etc/v2ray || exit
-    wget --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/VLESS_h2/config.json -O config.json
+    wget --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/VLESS_h2/config.json -O config.json
     modify_path
-    modify_alterid
     modify_inbound_port
     modify_UUID
 }
@@ -647,7 +664,7 @@ nginx_process_disabled() {
 #    judge "rc.local 配置"
 #}
 acme_cron_update() {
-    wget -N -P /usr/bin --no-check-certificate "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/dev/ssl_update.sh"
+    wget -N -P /usr/bin --no-check-certificate "https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/dev/ssl_update.sh"
     if [[ $(crontab -l | grep -c "ssl_update.sh") -lt 1 ]]; then
       if [[ "${ID}" == "centos" ]]; then
           #        sed -i "/acme.sh/c 0 3 * * 0 \"/root/.acme.sh\"/acme.sh --cron --home \"/root/.acme.sh\" \
@@ -847,7 +864,7 @@ ssl_update_manuel() {
 }
 bbr_boost_sh() {
     [ -f "tcp.sh" ] && rm -rf ./tcp.sh
-    wget -N --no-check-certificate "https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+    wget -N --no-check-certificate "https://raw.githubusercontents.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
 }
 mtproxy_sh() {
     wget -N --no-check-certificate "https://github.com/whunt1/onekeymakemtg/raw/master/mtproxy_go.sh" && chmod +x mtproxy_go.sh && bash mtproxy_go.sh
@@ -950,7 +967,7 @@ install_v2_h2() {
 
 }
 update_sh() {
-    ol_version=$(curl -L -s https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh | grep "shell_version=" | head -1 | awk -F '=|"' '{print $3}')
+    ol_version=$(curl -L -s https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh | grep "shell_version=" | head -1 | awk -F '=|"' '{print $3}')
     echo "$ol_version" >$version_cmp
     echo "$shell_version" >>$version_cmp
     if [[ "$shell_version" < "$(sort -rV $version_cmp | head -1)" ]]; then
@@ -958,7 +975,7 @@ update_sh() {
         read -r update_confirm
         case $update_confirm in
         [yY][eE][sS] | [yY])
-            wget -N --no-check-certificate https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh
+            wget -N --no-check-certificate https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/install.sh
             echo -e "${OK} ${GreenBG} 更新完成 ${Font}"
             exit 0
             ;;
@@ -1039,16 +1056,11 @@ menu() {
         install_v2_h2
         ;;
     3)
-        bash <(curl -L -s https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh)
+        bash <(curl -L -s https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/${github_branch}/v2ray.sh)
         ;;
     4)
         read -rp "请输入UUID:" UUID
         modify_UUID
-        start_process_systemd
-        ;;
-    5)
-        read -rp "请输入alterID:" alterID
-        modify_alterid
         start_process_systemd
         ;;
     6)
