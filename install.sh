@@ -124,8 +124,8 @@ judge() {
     fi
 }
 chrony_install() {
-        read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]默认Y:" osTimezoneInput; then
-        osTimezoneInput=${osTimezoneInput:-Y}
+     if read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]默认Y:" osTimezoneInput; then
+         osTimezoneInput=${osTimezoneInput:-Y}
         
         if [[ $osTimezoneInput == [Yy] ]]; then
             if [[ -f /etc/localtime ]] && [[ -f /usr/share/zoneinfo/Asia/Shanghai ]]; then
