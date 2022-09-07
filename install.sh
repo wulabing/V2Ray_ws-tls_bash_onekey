@@ -29,7 +29,7 @@ OK="${Green}[OK]${Font}"
 Error="${Red}[错误]${Font}"
 
 # 版本
-shell_version="1.2.3.0"
+shell_version="1.2.1.0"
 shell_mode="None"
 github_branch="master"
 version_cmp="/tmp/version_cmp.tmp"
@@ -124,8 +124,8 @@ judge() {
     fi
 }
 chrony_install() {
-     if read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]默认Y:" osTimezoneInput; then
-         osTimezoneInput=${osTimezoneInput:-Y}
+        read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]:" osTimezoneInput
+        osTimezoneInput=${osTimezoneInput:-Y}
         
         if [[ $osTimezoneInput == [Yy] ]]; then
             if [[ -f /etc/localtime ]] && [[ -f /usr/share/zoneinfo/Asia/Shanghai ]]; then
