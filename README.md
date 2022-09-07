@@ -1,4 +1,5 @@
 ## V2Ray 基于 Nginx 的 vmess+ws+tls 一键安装脚本
+#目前支持Debian 9+ / Ubuntu 18.04+ / Centos7+ / OpenVZ
 
 > 感谢 JetBrains 提供的非商业开源软件开发授权
 
@@ -32,7 +33,7 @@ wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.c
 ### 注意事项
 * 如果你不了解脚本中各项设置的具体含义，除域名外，请使用脚本提供的默认值
 * 使用本脚本需要你拥有 Linux 基础及使用经验，了解计算机网络部分知识，计算机基础操作
-* 目前支持Debian 9+ / Ubuntu 18.04+ / Centos7+ ，部分Centos模板可能存在难以处理的编译问题，建议遇到编译问题时，请更换至其他系统模板
+* 目前支持Debian 9+ / Ubuntu 18.04+ / Centos7+ / OpenVZ，部分Centos模板可能存在难以处理的编译问题，建议遇到编译问题时，请更换至其他系统模板
 * 群主仅提供极其有限的支持，如有问题可以询问群友
 * 每周日的凌晨3点，Nginx 会自动重启以配合证书的签发定时任务进行，在此期间，节点无法正常连接，预计持续时间为若干秒至两分钟
 
