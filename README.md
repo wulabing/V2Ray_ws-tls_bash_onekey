@@ -1,5 +1,5 @@
 ## V2Ray 基于 Nginx 的 vmess+ws+tls 一键安装脚本
-# 目前支持Debian 9+ / Ubuntu 18.04+ / Centos7+ / OpenVZ
+### 目前支持Debian 9+ / Ubuntu 18.04+ / Centos7+ / OpenVZ
 
 > 感谢 JetBrains 提供的非商业开源软件开发授权
 
