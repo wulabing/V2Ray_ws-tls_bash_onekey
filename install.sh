@@ -124,7 +124,7 @@ judge() {
     fi
 }
 chrony_install() {
-        read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]:" osTimezoneInput
+        read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]默认Y:" osTimezoneInput; then
         osTimezoneInput=${osTimezoneInput:-Y}
         
         if [[ $osTimezoneInput == [Yy] ]]; then
