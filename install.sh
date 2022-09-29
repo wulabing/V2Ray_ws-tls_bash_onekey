@@ -29,7 +29,7 @@ OK="${Green}[OK]${Font}"
 Error="${Red}[错误]${Font}"
 
 # 版本
-shell_version="1.2.1.0"
+shell_version="1.2.2.0"
 shell_mode="None"
 github_branch="master"
 version_cmp="/tmp/version_cmp.tmp"
@@ -953,7 +953,7 @@ modify_camouflage_path() {
     sed -i "/\"path\"/c \\\t  \"path\":\"\/${camouflage_path}\/\"" ${v2ray_conf}    #Modify the camouflage path of the v2ray configuration file
     judge "V2ray camouflage path modified"
 }
-setLinuxDateZone() {
+chrony_install() {
         read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]:" osTimezoneInput
         osTimezoneInput=${osTimezoneInput:-Y}
         
@@ -1055,7 +1055,7 @@ menu() {
         show_information
         ;;
     88 )
-        setLinuxDateZone
+        chrony_install
         ;;
     11)
         bbr_boost_sh
