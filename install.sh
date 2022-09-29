@@ -953,21 +953,6 @@ modify_camouflage_path() {
     sed -i "/\"path\"/c \\\t  \"path\":\"\/${camouflage_path}\/\"" ${v2ray_conf}    #Modify the camouflage path of the v2ray configuration file
     judge "V2ray camouflage path modified"
 }
-chrony_install() {
-        read -p "是否设置为北京时间 +0800 时区? 请输入[Y/n]:" osTimezoneInput
-        osTimezoneInput=${osTimezoneInput:-Y}
-        
-        if [[ $osTimezoneInput == [Yy] ]]; then
-            if [[ -f /etc/localtime ]] && [[ -f /usr/share/zoneinfo/Asia/Shanghai ]]; then
-                rm -rf /etc/localtime /etc/localtime.bak
-                ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-                
-                date
-                
-            fi
-        fi
-    judge "设置时区为北京时间"
-}
 
 menu() {
     update_sh
