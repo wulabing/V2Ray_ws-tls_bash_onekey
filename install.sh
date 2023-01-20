@@ -767,7 +767,7 @@ ssl_judge_and_install() {
         read -r ssl_delete
         case $ssl_delete in
         [yY][eE][sS] | [yY])
-            rm -rf /data/*
+            rm -rf /data/v2ray.crt /data/v2ray.key
             echo -e "${OK} ${GreenBG} 已删除 ${Font}"
             ;;
         *) ;;
@@ -886,7 +886,7 @@ uninstall_all() {
     [yY][eE][sS] | [yY])
       /root/.acme.sh/acme.sh --uninstall
       rm -rf /root/.acme.sh
-      rm -rf /data/*
+      rm -rf /data/v2ray.crt /data/v2ray.key
       ;;
     *) ;;
     esac
