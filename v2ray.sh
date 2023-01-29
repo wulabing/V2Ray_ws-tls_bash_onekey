@@ -317,7 +317,7 @@ download_v2ray() {
     fi
 
     # Verification of V2Ray archive
-    for LISTSUM in 'md5' 'sha1' 'sha256' 'sha512'; do
+    for LISTSUM in 'md5' 'sha1'; do
         SUM="$(${LISTSUM}sum "$ZIP_FILE" | sed 's/ .*//')"
         CHECKSUM="$(grep ${LISTSUM^^} "$ZIP_FILE".dgst | grep "$SUM" -o -a | uniq)"
         if [[ "$SUM" != "$CHECKSUM" ]]; then
