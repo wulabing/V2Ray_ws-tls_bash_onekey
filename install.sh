@@ -164,7 +164,7 @@ chrony_install() {
 }
 
 dependency_install() {
-    ${INS} install wget git lsof -y
+    ${INS} install wget git lsof bind9-dnsutils -y
 
     if [[ "${ID}" == "centos" ]]; then
         ${INS} -y install crontabs
@@ -439,7 +439,8 @@ ssl_install() {
 
 domain_check() {
     read -rp "请输入你的域名信息(eg:www.wulabing.com):" domain
-    domain_ip=$(curl -sm8 https://ipget.net/?ip="${domain}")
+    domain_ipv4="$(dig +short "${domain}" a)"
+    domain_ipv6="$(dig +short "${domain}" aaaa)"
     echo -e "${OK} ${GreenBG} 正在获取 公网ip 信息，请耐心等待 ${Font}"
     wgcfv4_status=$(curl -s4m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
     wgcfv6_status=$(curl -s6m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
@@ -458,10 +459,10 @@ domain_check() {
     echo -e "本机IPv4: ${local_ipv4}"
     echo -e "本机IPv6: ${local_ipv6}"
     sleep 2
-    if [[ ${domain_ip} == ${local_ipv4} ]]; then
+    if [[ ${domain_ipv4} == ${local_ipv4} ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv4 匹配 ${Font}"
         sleep 2
-    elif [[ ${domain_ip} == ${local_ipv6} ]]; then
+    elif [[ ${domain_ipv6} == ${local_ipv6} ]]; then
         echo -e "${OK} ${GreenBG} 域名 DNS 解析 IP 与 本机 IPv6 匹配 ${Font}"
         sleep 2
     else
