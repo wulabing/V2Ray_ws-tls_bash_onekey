@@ -428,6 +428,8 @@ nginx_install() {
 ssl_install() {
     if [[ "${ID}" == "centos" ]]; then
         ${INS} install socat nc -y
+	elif [[ "${ID}" == "debian" && ${VERSION_ID} -ge 12 ]]; then
+		${INS} install socat netcat-openbsd -y
     else
         ${INS} install socat netcat -y
     fi
@@ -608,7 +610,7 @@ EOF
 
 start_process_systemd() {
     systemctl daemon-reload
-    chown -R root.root /var/log/v2ray/
+    chown -R root:root /var/log/v2ray/
     if [[ "$shell_mode" != "h2" ]]; then
         systemctl restart nginx
         judge "Nginx 启动"
