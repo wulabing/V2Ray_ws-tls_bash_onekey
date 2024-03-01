@@ -429,7 +429,7 @@ ssl_install() {
     if [[ "${ID}" == "centos" ]]; then
         ${INS} install socat nc -y
     else
-        ${INS} install socat netcat -y
+        ${INS} install socat netcat-openbsd -y
     fi
     judge "安装 SSL 证书生成脚本依赖"
 
@@ -608,7 +608,7 @@ EOF
 
 start_process_systemd() {
     systemctl daemon-reload
-    chown -R root.root /var/log/v2ray/
+    chown -R root:root /var/log/v2ray/
     if [[ "$shell_mode" != "h2" ]]; then
         systemctl restart nginx
         judge "Nginx 启动"
