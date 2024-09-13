@@ -3,6 +3,10 @@
 > 感谢 JetBrains 提供的非商业开源软件开发授权
 
 > Thanks for non-commercial open source development authorization by JetBrains
+
+## 由于 Nginx 前置导致的嵌套 tls 可能会出现连接阻断，目前仅推荐使用 reality ，建议移步到以下地址
+https://github.com/wulabing/xray_docker
+
 ### 关于 VMess MD5 认证信息 淘汰机制
 > 自 2022 年 1 月 1 日起，服务器端将默认禁用对于 MD5 认证信息 的兼容。任何使用 MD5 认证信息的客户端将无法连接到禁用 VMess MD5 认证信息的服务器端。
 
