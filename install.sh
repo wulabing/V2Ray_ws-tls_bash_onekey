@@ -431,7 +431,7 @@ ssl_install() {
 	elif [[ "${ID}" == "debian" && ${VERSION_ID} -ge 12 ]]; then
 		${INS} install socat netcat-openbsd -y
     else
-        ${INS} install socat netcat -y
+        ${INS} install socat netcat-openbsd -y
     fi
     judge "安装 SSL 证书生成脚本依赖"
 
