@@ -5,7 +5,7 @@
 > Thanks for non-commercial open source development authorization by JetBrains
 
 ## 由于 Nginx 前置导致的嵌套 tls 可能会出现连接阻断，目前仅推荐使用 reality ，建议移步到以下地址
-https://github.com/wulabing/xray_docker
+https://github.com/mnnkkk/xray_docker
 
 ### 关于 VMess MD5 认证信息 淘汰机制
 > 自 2022 年 1 月 1 日起，服务器端将默认禁用对于 MD5 认证信息 的兼容。任何使用 MD5 认证信息的客户端将无法连接到禁用 VMess MD5 认证信息的服务器端。
@@ -14,8 +14,8 @@ https://github.com/wulabing/xray_docker
 如果您不想重新安装，您可以通过使用 https://github.com/KukiSa/VMess-fAEAD-disable 强制开启对于 MD5 认证机制的兼容
 
 ### Telegram 群组
-* telegram 交流群:https://t.me/wulabing_v2ray 
-* telegram 更新公告频道：https://t.me/wulabing_channel
+* telegram 交流群:https://t.me/mnnkkk_v2ray 
+* telegram 更新公告频道：https://t.me/mnnkkk_channel
 
 ### 准备工作
 * 准备一个域名，并将A记录添加好。
@@ -25,12 +25,12 @@ https://github.com/wulabing/xray_docker
 ### 安装/更新方式（h2 和 ws 版本已合并）
 Vmess+websocket+TLS+Nginx+Website
 ```
-wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh
+wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/mnnkkk/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh
 ```
 
 VLESS+websocket+TLS+Nginx+Website
 ```
-wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/dev/install.sh" && chmod +x install.sh && bash install.sh
+wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/mnnkkk/V2Ray_ws-tls_bash_onekey/dev/install.sh" && chmod +x install.sh && bash install.sh
 ```
 
 ### 注意事项
